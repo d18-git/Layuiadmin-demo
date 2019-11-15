@@ -21,26 +21,27 @@ layui.define(['table', 'form'], function (exports) {
       { type: 'checkbox', fixed: 'left' }
       , { field: 'id', width: 100, title: '文章ID', sort: true }
       , {
-        field: 'title', title: '文章标题', templet: function (d) {
+        field: 'title', title: '文章标题', minWidth: 500, templet: function (d) {
           return '<a href="#" style="color:#1e9fff" lay-event="edit">' + d.title + '</a>'
         }
       }
-      , { field: 'label', title: '文章标签', minWidth: 100, }
-      , { field: 'browse', title: '浏览', sort: true, width: '8%' }
+      , { field: 'label', title: '文章标签', width: '8%', align: 'center' }
+      , { field: 'browse', title: '浏览', sort: true, width: '8%', align: 'center' }
       , {
-        field: 'thumbnail', title: '缩略图', align:'center', templet:function(d) {
+        field: 'thumbnail', title: '缩略图', align: 'center', templet: function (d) {
           if (!d.thumbnail) {
-            return "无"
+            return '<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="thumbnail">上传</button>'
           } else {
-            return '<a href="#" style="color:#1e9fff" lay-event="thumbnail">有</a>'
+            return '<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="thumbnail">查看</button>'
           }
-      }}
+        }
+      }
       , { field: 'uploadtime', title: '上传时间', sort: true }
       , { field: 'status', title: '发布状态', templet: '#buttonTpl', minWidth: 80, align: 'center' }
       , { title: '操作', minWidth: 150, align: 'center', fixed: 'right', toolbar: '#table-content-list' }
     ]]
     , page: true
-    , limit: 10
+    , limit: 1
     , limits: [10, 15, 20, 25, 30]
     , text: '对不起，加载出现异常！'
   });
@@ -56,11 +57,10 @@ layui.define(['table', 'form'], function (exports) {
     } else if (obj.event === 'edit') {
       layer.open({
         type: 2
-        , skin: 'demo-class'
         , title: ['编辑文章', 'color: #fff; background-color: #009f95;']
         , content: '../../../views/app/content/listform.html?id=' + data.id
         , maxmin: true
-        , area: ['80%', '80%']
+        , area: ['80%', '90%']
         , btn: ['确定', '取消']
         , yes: function (index, layero) {
           var iframeWindow = window['layui-layer-iframe' + index]
@@ -86,9 +86,39 @@ layui.define(['table', 'form'], function (exports) {
           submit.trigger('click');
         }
       });
-      
+
     } else if (obj.event === 'thumbnail') {
-      layer.open({})
+      layer.open({
+        type: 2
+        , title: ['缩略图', 'color: #fff; background-color: #009f95;']
+        , content: '../../../views/app/content/thumbnail.html?id=' + data.id
+        , maxmin: true
+        , area: ['80%', '90%']
+        , btn: ['确定', '取消']
+        , yes: function (index, layero) {
+          var iframeWindow = window['layui-layer-iframe' + index]
+            , submit = layero.find('iframe').contents().find("#layuiadmin-app-form-upload");
+
+          //监听提交
+          iframeWindow.layui.form.on('submit(layuiadmin-app-form-upload)', function (data) {
+            var field = data.field; //获取提交的字段
+
+            //提交 Ajax 成功后，静态更新表格中的数据
+            //$.ajax({});              
+            obj.update({
+              label: field.label
+              , title: field.title
+              , author: field.author
+              , status: field.status
+            }); //数据更新
+
+            form.render();
+            layer.close(index); //关闭弹层
+          });
+
+          submit.trigger('click');
+        }
+      })
     }
   });
 
@@ -119,7 +149,7 @@ layui.define(['table', 'form'], function (exports) {
         type: 2
         , title: '编辑分类'
         , content: '../../../views/app/content/tagsform.html?id=' + data.id
-        , area: ['450px', '200px']
+        , area: ['80%', '90%']
         , btn: ['确定', '取消']
         , yes: function (index, layero) {
           //获取iframe元素的值

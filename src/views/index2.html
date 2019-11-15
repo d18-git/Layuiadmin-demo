@@ -1,28 +1,516 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>开始使用layui</title>
+  <title>layuiAdmin std</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
   <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
-</head>
-<body>
- 
-<!-- 你的HTML代码 -->
- 
-<script src="../layuiadmin/layui/layui.js"></script>
 
-<script>
-//由于模块都一次性加载，因此不用执行 layui.use() 来加载对应模块，直接使用即可：
-;!function(){
-  var layer = layui.layer
-  ,form = layui.form;
-  
-  layer.msg('Hello World');
-}();
-     
-</script> 
+  <script>
+    /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
+  </script>
+</head>
+
+<body class="layui-layout-body">
+
+  <div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <!-- 头部区域 -->
+        <ul class="layui-nav layui-layout-left">
+          <li class="layui-nav-item layadmin-flexible" lay-unselect>
+            <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+              <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="#" target="_blank" title="前台">
+              <i class="layui-icon layui-icon-home"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;" layadmin-event="refresh" title="刷新">
+              <i class="layui-icon layui-icon-refresh-3"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search"
+              layadmin-event="serach" lay-action="template/search.html?keywords=">
+          </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+
+          <li class="layui-nav-item" lay-unselect>
+            <a lay-href="app/message/index.html" layadmin-event="message" lay-text="消息中心">
+              <i class="layui-icon layui-icon-notice"></i>
+
+              <!-- 如果有新消息，则显示小圆点 -->
+              <span class="layui-badge-dot"></span>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="theme">
+              <i class="layui-icon layui-icon-theme"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="note">
+              <i class="layui-icon layui-icon-note"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="fullscreen">
+              <i class="layui-icon layui-icon-screen-full"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;">
+              <cite>贤心</cite>
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a lay-href="set/user/info.html">基本资料</a></dd>
+              <dd><a lay-href="set/user/password.html">修改密码</a></dd>
+              <hr>
+              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+            </dl>
+          </li>
+
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
+          </li>
+          <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+            <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
+          </li>
+        </ul>
+      </div>
+      <!-- 侧边菜单 -->
+      <div class="layui-side layui-side-menu layui-nav-tree layui-nav-side">
+        <div class="layui-side-scroll">
+          <div class="layui-logo" lay-href="home/homepage2.html">
+            <span>AnHi wlCms</span>
+          </div>
+
+          <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+            lay-filter="layadmin-system-side-menu">
+            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+              <a lay-href="home/homepage2.html" lay-tips="后台首页" lay-direction="2">
+                <i class="layui-icon layui-icon-home"></i>
+                <cite>控制台</cite>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 页面标签 -->
+      <div class="layadmin-pagetabs" id="LAY_app_tabs">
+        <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+        <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+        <div class="layui-icon layadmin-tabs-control layui-icon-down">
+          <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+            <li class="layui-nav-item" lay-unselect>
+              <a href="javascript:;"></a>
+              <dl class="layui-nav-child layui-anim-fadein">
+                <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+        <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+          <ul class="layui-tab-title" id="LAY_app_tabsheader">
+            <li lay-id="home/console.html" lay-attr="home/console.html" class="layui-this"><i
+                class="layui-icon layui-icon-home"></i></li>
+          </ul>
+        </div>
+      </div>
+
+
+      <!-- 主体内容 -->
+      <div class="layui-body" id="LAY_app_body">
+        <div class="layadmin-tabsbody-item layui-show">
+          <iframe src="home/homepage2.html" frameborder="0" class="layadmin-iframe"></iframe>
+        </div>
+      </div>
+
+      <!-- 辅助元素，一般用于移动设备下遮罩 -->
+      <div class="layadmin-body-shade" layadmin-event="shade"></div>
+    </div>
+  </div>
+
+  <script src="../layuiadmin/layui/layui.js"></script>
+
+  <script>
+    data = [{
+      "name": "component"
+      , "title": "组件"
+      , "icon": "layui-icon-component"
+      , "list": [{
+        "name": "grid"
+        , "title": "栅格"
+        , "list": [{
+          "name": "list"
+          , "title": "等比例列表排列"
+        }, {
+          "name": "mobile"
+          , "title": "按移动端排列"
+        }, {
+          "name": "mobile-pc"
+          , "title": "移动桌面端组合"
+        }, {
+          "name": "all"
+          , "title": "全端复杂组合"
+        }, {
+          "name": "stack"
+          , "title": "低于桌面堆叠排列"
+        }, {
+          "name": "speed-dial"
+          , "title": "九宫格"
+        }]
+      }, {
+        "name": "button"
+        , "title": "按钮"
+      }, {
+        "name": "form"
+        , "title": "表单"
+        , "list": [{
+          "name": "element"
+          , "title": "表单元素"
+        }, {
+          "name": "group"
+          , "title": "表单组合"
+        }]
+      }, {
+        "name": "nav"
+        , "title": "导航"
+      }, {
+        "name": "tabs"
+        , "title": "选项卡"
+      }, {
+        "name": "progress"
+        , "title": "进度条"
+      }, {
+        "name": "panel"
+        , "title": "面板"
+      }, {
+        "name": "badge"
+        , "title": "徽章"
+      }, {
+        "name": "timeline"
+        , "title": "时间线"
+      }, {
+        "name": "anim"
+        , "title": "动画"
+      }, {
+        "name": "auxiliar"
+        , "title": "辅助"
+      }, {
+        "name": "layer"
+        , "title": "通用弹层"
+        , "list": [{
+          "name": "list"
+          , "title": "功能演示"
+        }, {
+          "name": "special-demo"
+          , "title": "特殊示例"
+        }, {
+          "name": "theme"
+          , "title": "风格定制"
+        }]
+      }, {
+        "name": "laydate"
+        , "title": "日期时间"
+      }, {
+        "name": "table"
+        , "title": "表格"
+      }, {
+        "name": "laypage"
+        , "title": "分页"
+      }, {
+        "name": "upload"
+        , "title": "上传"
+      }, {
+        "name": "carousel"
+        , "title": "轮播"
+      }, {
+        "name": "laytpl"
+        , "title": "模板引擎"
+      }, {
+        "name": "flow"
+        , "title": "流加载"
+      }, {
+        "name": "util"
+        , "title": "工具"
+      }, {
+        "name": "code"
+        , "title": "代码修饰"
+      }, {
+        "name": "layim"
+        , "title": "即时聊天"
+        , "jump": "senior/im/chat"
+      }]
+    }, {
+      "name": "template"
+      , "title": "模板"
+      , "icon": "layui-icon-template"
+      , "list": [{
+        "name": "user"
+        , "title": "用户相关"
+        , "spread": true
+        , "list": [{
+          "name": "reg"
+          , "title": "注册"
+          , "jump": "user/reg"
+        }, {
+          "name": "login"
+          , "title": "登入"
+          , "jump": "user/login"
+        }, {
+          "name": "forget"
+          , "title": "忘记密码"
+          , "jump": "user/forget"
+        }]
+      }, {
+        "name": "tips"
+        , "title": "提示页面"
+        , "spread": true
+        , "list": [{
+          "name": "404"
+          , "title": "404"
+        }, {
+          "name": "error"
+          , "title": "错误提示"
+        }]
+      }]
+    }, {
+      "name": "app"
+      , "title": "应用"
+      , "icon": "layui-icon-app"
+      , "list": [{
+        "name": "message"
+        , "title": "消息中心"
+      }, {
+        "name": "content"
+        , "title": "内容系统"
+        , "spread": true
+        , "list": [{
+          "name": "list"
+          , "title": "所有文章"
+        }, {
+          "name": "comment"
+          , "title": "评论管理"
+        }, {
+          "name": "tags"
+          , "title": "标签管理"
+        }]
+      }, {
+        "name": "forum"
+        , "title": "社区系统"
+        , "spread": true
+        , "list": [{
+          "name": "list"
+          , "title": "全部帖子"
+        }, {
+          "name": "replys"
+          , "title": "所有回帖"
+        }]
+      }, {
+        "name": "mall"
+        , "title": "商城管理"
+        , "spread": true
+        , "list": [{
+          "name": "list"
+          , "title": "商品列表"
+        }, {
+          "name": "category"
+          , "title": "分类管理"
+        }, {
+          "name": "specs"
+          , "title": "规格管理"
+        }]
+      }]
+    }, {
+      "name": "senior"
+      , "title": "高级"
+      , "icon": "layui-icon-senior"
+      , "list": [{
+        "name": "im"
+        , "title": "通讯系统"
+        , "spread": true
+        , "list": [{
+          "name": "chat"
+          , "title": "社交聊天"
+        }, {
+          "name": "kefu"
+          , "title": "客服系统"
+        }]
+      }, {
+        "name": "echarts"
+        , "title": "Echarts 集成"
+        , "spread": true
+        , "list": [{
+          "name": "line"
+          , "title": "折线图"
+        }, {
+          "name": "bar"
+          , "title": "柱状图"
+        }, {
+          "name": "map"
+          , "title": "地图"
+        }]
+      }]
+    }, {
+      "name": "user"
+      , "title": "用户"
+      , "icon": "layui-icon-user"
+      , "list": [{
+        "name": "user"
+        , "title": "用户"
+        , "spread": true
+        , "list": [{
+          "name": "list"
+          , "title": "用户列表"
+        }]
+      }, {
+        "name": "administrators"
+        , "title": "后台管理组"
+        , "spread": true
+        , "list": [{
+          "name": "list"
+          , "title": "管理员列表"
+        }, {
+          "name": "role"
+          , "title": "角色管理"
+        }]
+      }]
+    }, {
+      "name": "set"
+      , "title": "设置"
+      , "icon": "layui-icon-set"
+      , "list": [{
+        "name": "base"
+        , "title": "基本设置"
+        , "spread": true
+        , "list": [{
+          "name": "website"
+          , "title": "系统设置"
+        }, {
+          "name": "email"
+          , "title": "邮件服务"
+        }]
+      }, {
+        "name": "security"
+        , "title": "安全设置"
+      }]
+    }, {
+      "name": "get"
+      , "title": "授权"
+      , "icon": "layui-icon-auz"
+      , "jump": "system/get"
+    }]
+    data = JSON.parse(data);
+    // 导航菜单的间隔像素
+    var menuCell = 5;
+
+    layui.use('element', function () {
+      var element = layui.element;
+      var $ = layui.jquery;
+
+      var liStr = "";
+      // 遍历生成主菜单
+      for (var i = 0; i < data.length; i++) {
+        // console.log("--> "+JSON.stringify(data[i]));
+        // 判断是否存在子菜单
+        if (data[i].list != null && data[i].list.length > 0) {
+          console.log("--> " + JSON.stringify(data[i].list));
+          liStr += "<li data-name="+ data[i].name +" class=\"layui-nav-item\"><a lay-tips="+ data[i].title +" class=\"\" lay-direction=\"2\" href=\"javascript:;\"><i class='layui-icon layui-icon"+data[i].icon +"'></i><cite>"+ data[i].title +"</cite></a>\n" +
+            "<dl class=\"layui-nav-child\">\n";
+
+          // 遍历获取子菜单
+          for (var k = 0; k < data[i].list.length; k++) {
+            liStr += getChildMenu(data[i].list[k], 0);
+          }
+          liStr += "</dl></li>";
+        } else {
+          liStr += "<li class=\"layui-nav-item\"><a class=\"\" href=\"" + data[i].url + "\"><i class='layui-icon' >&#xe66c;</i> " + data[i].name + "</a></li>";
+        }
+      };
+      // console.log(">>>> "+liStr);
+      $("#navBarId").html("<ul class=\"layui-nav layui-nav-tree\"  lay-filter=\"test\">\n" + liStr + "</ul>");
+      element.init();
+
+    });
+
+    // 递归生成子菜单
+    function getChildMenu(subMenu, num) {
+      // console.log("num: "+num);
+      num++;
+      var subStr = "";
+      if (subMenu.childMenus != null && subMenu.childMenus.length > 0) {
+        subStr += "<dd><ul><li class=\"layui-nav-item\" ><a style=\"margin-Left:" + num * menuCell + "px\" class=\"\" href=\"javascript:;\"><i class='layui-icon' >&#xe653;</i> " + subMenu.name + "</a>" +
+          "<dl class=\"layui-nav-child\">\n";
+        for (var j = 0; j < subMenu.childMenus.length; j++) {
+          subStr += getChildMenu(subMenu.childMenus[j], num);
+        }
+        subStr += "</dl></li></ul></dd>";
+      } else {
+        subStr += "<dd><a style=\"margin-Left:" + num * menuCell + "px\" href=\"" + subMenu.url + "\"><i class='layui-icon' >&#xe66c;</i> " + subMenu.name + "</a></dd>";
+      }
+      return subStr;
+    }
+
+    layui.use('table', function () {
+      var table = layui.table;
+
+      table.render({
+        elem: '#LAY-system-side-menu'
+        , url: '../layuiadmin/json/menu.js'
+        , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        , cols: [[
+          { field: 'id', width: 80, title: 'id', sort: true }
+          , { field: 'lngCm', width: 80, title: 'lngCm' }
+          , { field: 'username', width: 80, title: 'username', sort: true }
+        ]]
+        , request: {
+          pageName: 'curr' //页码的参数名称，默认：page
+          , limitName: 'nums' //每页数据量的参数名，默认：limit
+        }
+        //用于对返回的数据格式的自定义，如：
+        , response: {
+          statusName: 'succ' //数据状态的字段名称，默认：code
+          , statusCode: 0 //成功的状态码，默认：0
+          , msgName: 'msg' //状态信息的字段名称，默认：msg
+          , countName: 'totalSize' //数据总数的字段名称，默认：count
+          , dataName: 'list' //数据列表的字段名称，默认：data
+        }
+      });
+    });
+
+  </script>
+  <script>
+    layui.config({
+      base: '../layuiadmin/' //静态资源所在路径
+    }).extend({
+      index: 'lib/index' //主入口模块
+    }).use('index');
+  </script>
+
+  <!-- 百度统计 -->
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
 </body>
+
 </html>
-      
